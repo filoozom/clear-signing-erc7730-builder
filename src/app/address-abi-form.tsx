@@ -131,7 +131,6 @@ const CardErc7730 = () => {
     const erc7730 = await fetchERC7730Metadata({ input: data, type });
 
     if (erc7730) {
-      console.log(erc7730);
       useFunctionStore.persist.clearStorage();
 
       if (schema) {
