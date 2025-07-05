@@ -88,8 +88,6 @@ const fetchAiInfo = async (address: Address) => {
     In addition to this, provide the smart contract owner common name, legal name, URL and smart contract name.
 	`;
 
-  console.log(prompt);
-
   const result = await generateText({
     model: openrouter.chat(MODEL),
     system: `You are a helpful assistant that provides detailed information about smart contracts on the Ethereum Virtual Machine (EVM). You have access to the Sourcify data, which allows you to fetch verified smart contract data including ABI, source code, developer documentation, and user documentation.`,
@@ -134,7 +132,15 @@ const fetchAiInfo = async (address: Address) => {
   const cleaned = result.text.replace(/^\s*```json/, "").replace(/```\s*$/, "");
   const parsed = JSON.parse(cleaned);
 
-  return { ...data, ...parsed };
+  if (data.userdoc?.methods?.constructor) {
+    delete data.userdoc.methods.constructor;
+  }
+
+  if (data.devdoc?.methods?.constructor) {
+    delete data.devdoc.methods.constructor;
+  }
+
+  return { ...data, ai: parsed };
 };
 
 const fetchUpstreamData = async (address: Address) => {
@@ -156,6 +162,6 @@ export const sample = createTRPCRouter({
         fetchUpstreamData(address as Address),
         fetchAiInfo(address as Address),
       ]);
-      return { ...upstream, ai };
+      return { ...upstream, ...ai };
     }),
 });

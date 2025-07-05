@@ -18,7 +18,8 @@ import { Trash } from "lucide-react";
 import OperationScreens from "./operationScreens";
 import { Card } from "~/components/ui/card";
 import ValidOperationButton from "./validOperationButton";
-import { FormSuggestion } from "~/components/ui/inputSuggestion";
+import { Suggestion } from "~/components/ui/form-suggestion";
+import { FormSuggestions } from "~/components/ui/form-suggestions";
 
 const FieldNotIncluded = ({
   form,
@@ -68,11 +69,11 @@ const FieldHeader = ({
 const FieldLabelInput = ({
   form,
   index,
-  suggestion,
+  suggestions,
 }: {
   form: UseFormReturn<OperationFormType>;
   index: number;
-  suggestion?: string;
+  suggestions?: Suggestion[];
 }) => (
   <FormField
     control={form.control}
@@ -91,7 +92,7 @@ const FieldLabelInput = ({
           />
         </FormControl>
         <FormMessage />
-        <FormSuggestion field={field} data={suggestion} />
+        <FormSuggestions field={field} suggestions={suggestions} />
       </FormItem>
     )}
   />
@@ -126,7 +127,7 @@ interface Props {
   operation: Operation | null;
   field: Operation["fields"][number];
   index: number;
-  suggestion?: string;
+  suggestions?: Suggestion[];
   onContinue?: () => void;
   onPrevious?: () => void;
   onLast?: () => void;
@@ -137,7 +138,7 @@ const FieldForm = ({
   form,
   index,
   operation,
-  suggestion,
+  suggestions,
   onContinue,
   onPrevious,
   onLast,
@@ -157,7 +158,7 @@ const FieldForm = ({
             <FieldLabelInput
               form={form}
               index={index}
-              suggestion={suggestion}
+              suggestions={suggestions}
             />
             <FieldRequiredSwitch form={form} index={index} />
             <FieldSelector field={field} form={form} index={index} />

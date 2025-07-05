@@ -20,7 +20,7 @@ import Devices from "./devices";
 import { Erc7730StoreContext, useErc7730Store } from "~/store/erc7730Provider";
 import { Card } from "~/components/ui/card";
 import type { Erc7730 } from "~/store/types";
-import { FormSuggestion } from "../../components/ui/inputSuggestion";
+import { FormSuggestion } from "~/components/ui/form-suggestion";
 
 const metaDataSchema = z.object({
   owner: z.string().min(1, {
@@ -131,7 +131,11 @@ const MetadataForm = () => {
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
-                    <FormSuggestion field={field} data={ai?.ownerName} />
+                    <FormSuggestion
+                      field={field}
+                      type="ai"
+                      value={ai?.ownerName}
+                    />
                   </FormItem>
                 )}
               />
@@ -145,7 +149,11 @@ const MetadataForm = () => {
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
-                    <FormSuggestion field={field} data={ai?.ownerLegalName} />
+                    <FormSuggestion
+                      field={field}
+                      type="ai"
+                      value={ai?.ownerLegalName}
+                    />
                   </FormItem>
                 )}
               />
@@ -165,7 +173,11 @@ const MetadataForm = () => {
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
-                    <FormSuggestion field={field} data={ai?.projectUrl} />
+                    <FormSuggestion
+                      field={field}
+                      type="ai"
+                      value={ai?.projectUrl}
+                    />
                   </FormItem>
                 )}
               />
@@ -179,7 +191,11 @@ const MetadataForm = () => {
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
-                    <FormSuggestion field={field} data={ai?.contractName} />
+                    <FormSuggestion
+                      field={field}
+                      type="ai"
+                      value={ai?.contractName}
+                    />
                   </FormItem>
                 )}
               />

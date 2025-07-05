@@ -97,7 +97,7 @@ const EditOperation = ({ selectedOperation }: Props) => {
   const formSteps = watch("fields").map((field) => field.path);
   const [step, setStep] = useState("intent");
 
-  const { getAiData } = useErc7730Store((s) => s);
+  const { getAiData, getUserdoc } = useErc7730Store((s) => s);
   const [fnName] = selectedOperation.split("(", 1);
   const aiFunction = getAiData()?.functions?.find((fn) => fn.name === fnName);
 
@@ -194,7 +194,13 @@ const EditOperation = ({ selectedOperation }: Props) => {
                 form={form}
                 operationMetadata={operationMetadata}
                 onContinue={() => setStep(formSteps[0] ?? "")}
-                suggestion={aiFunction?.humanReadableName}
+                suggestions={[
+                  {
+                    type: "userdoc",
+                    value: getUserdoc()?.methods?.[selectedOperation]?.notice,
+                  },
+                  { type: "ai", value: aiFunction?.humanReadableName },
+                ]}
               />
             </TabsContent>
             {form.watch("fields").map((field, index) => (
@@ -204,7 +210,12 @@ const EditOperation = ({ selectedOperation }: Props) => {
                   form={form}
                   index={index}
                   operation={operationToEdit}
-                  suggestion={aiFunction?.arguments[index]?.humanReadableName}
+                  suggestions={[
+                    {
+                      type: "ai",
+                      value: aiFunction?.arguments[index]?.humanReadableName,
+                    },
+                  ]}
                   onPrevious={() =>
                     index > 0
                       ? setStep(formSteps[index - 1] ?? "intent")

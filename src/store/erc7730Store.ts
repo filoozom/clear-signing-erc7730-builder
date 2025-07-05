@@ -19,6 +19,13 @@ type Erc7730WithAI = Erc7730 & {
       }[];
     }[];
   };
+  userdoc?: {
+    methods: Record<string, { notice: string }>;
+    ownerName: string;
+    ownerLegalName: string;
+    projectUrl: string;
+    contractName: string;
+  };
 };
 
 export interface Erc7730Store {
@@ -27,6 +34,7 @@ export interface Erc7730Store {
   setErc7730: (by: Erc7730WithAI) => void;
   getMetadata: () => Erc7730WithAI["metadata"] | null;
   getAiData: () => Erc7730WithAI["ai"] | null;
+  getUserdoc: () => Erc7730WithAI["userdoc"] | null;
   getContractAddress: () => string | null;
   getContractId: () => string | null;
   setContractId: ($id: Erc7730WithAI["context"]["$id"]) => void;
@@ -122,6 +130,7 @@ export const createErc7730Store = () => {
         getOperations: () => get().generatedErc7730?.display ?? null,
         getMetadata: () => get().generatedErc7730?.metadata ?? null,
         getAiData: () => get().generatedErc7730?.ai ?? null,
+        getUserdoc: () => get().generatedErc7730?.userdoc ?? null,
         getOperationsMetadata: (name) => {
           if (!name) return null;
           const formats = get().generatedErc7730?.display?.formats ?? {};

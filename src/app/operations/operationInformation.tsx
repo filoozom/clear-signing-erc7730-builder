@@ -14,17 +14,18 @@ import { TitleScreen } from "~/components/devices/titleScreen";
 import { Card } from "~/components/ui/card";
 import { type OperationMetadata } from "~/store/types";
 import { Button } from "~/components/ui/button";
-import { FormSuggestion } from "~/components/ui/inputSuggestion";
 import { lowerCaseFirst } from "~/lib/strings";
+import { FormSuggestions } from "~/components/ui/form-suggestions";
+import { Suggestion } from "~/components/ui/form-suggestion";
 
 interface Props {
   form: UseFormReturn<OperationFormType>;
   operationMetadata: OperationMetadata | null;
   onContinue: () => void;
-  suggestion?: string;
+  suggestions?: Suggestion[];
 }
 
-const OperationInformation = ({ form, onContinue, suggestion }: Props) => {
+const OperationInformation = ({ form, onContinue, suggestions }: Props) => {
   const { intent } = form.watch();
 
   return (
@@ -44,9 +45,12 @@ const OperationInformation = ({ form, onContinue, suggestion }: Props) => {
                   This is the name of the transaction Operation.
                 </FormDescription>
                 <FormMessage />
-                <FormSuggestion
+                <FormSuggestions
                   field={field}
-                  data={lowerCaseFirst(suggestion)}
+                  suggestions={suggestions?.map((suggestion) => ({
+                    ...suggestion,
+                    value: lowerCaseFirst(suggestion.value),
+                  }))}
                 />
               </FormItem>
             )}
