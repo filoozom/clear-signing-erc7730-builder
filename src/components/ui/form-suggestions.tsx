@@ -8,6 +8,6 @@ interface Props {
 
 export const FormSuggestions = ({ field, suggestions }: Props) => {
   return suggestions?.map((suggestion) => (
-    <FormSuggestion field={field} {...suggestion} />
+    <FormSuggestion key={suggestion.type} field={field} {...suggestion} />
   ));
 };
