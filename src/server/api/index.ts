@@ -88,7 +88,7 @@ const fetchAiInfo = async (address: Address) => {
 		${JSON.stringify(filteredAbi, null, 2)}
 		\`\`\`
 
-		Make sure to include the human readable function name and arguments (including the name, type and ~100 character human readable name) that each function takes.
+		Make sure to include the human readable function name and arguments (including the name, type and concise human readable name) that each function takes.
     
     In addition to this, provide the smart contract owner common name, legal name, URL and smart contract name.
 	`;
@@ -115,7 +115,7 @@ const fetchAiInfo = async (address: Address) => {
               name: z.string().describe("The name of the function"),
               humanReadableName: z
                 .string()
-                .describe("The human-readable name of the function"),
+                .describe("The concise human-readable name of the function"),
               arguments: z.array(
                 z
                   .object({
@@ -123,7 +123,9 @@ const fetchAiInfo = async (address: Address) => {
                     type: z.string().describe("The type of the argument"),
                     humanReadableName: z
                       .string()
-                      .describe("The human-readable name of the argument"),
+                      .describe(
+                        "The concise human-readable name of the argument",
+                      ),
                   })
                   .describe("The arguments of the function"),
               ),
