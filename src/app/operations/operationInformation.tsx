@@ -15,6 +15,7 @@ import { Card } from "~/components/ui/card";
 import { type OperationMetadata } from "~/store/types";
 import { Button } from "~/components/ui/button";
 import { FormSuggestion } from "~/components/ui/inputSuggestion";
+import { lowerCaseFirst } from "~/lib/strings";
 
 interface Props {
   form: UseFormReturn<OperationFormType>;
@@ -43,7 +44,10 @@ const OperationInformation = ({ form, onContinue, suggestion }: Props) => {
                   This is the name of the transaction Operation.
                 </FormDescription>
                 <FormMessage />
-                <FormSuggestion field={field} data={suggestion} />
+                <FormSuggestion
+                  field={field}
+                  data={lowerCaseFirst(suggestion)}
+                />
               </FormItem>
             )}
           />
