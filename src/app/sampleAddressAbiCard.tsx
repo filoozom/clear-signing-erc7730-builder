@@ -29,7 +29,7 @@ const predefinedABIs = [
 
 interface Props {
   setInput: Dispatch<SetStateAction<string>>;
-  inputType: "address" | "abi" | "protocol";
+  inputType: string;
 }
 
 const titles: Record<Props["inputType"], string> = {
@@ -63,6 +63,10 @@ const predefinedData: Record<
 };
 
 const SampleAddressAbiCard = ({ setInput, inputType }: Props) => {
+  if (!predefinedData[inputType]) {
+    return;
+  }
+
   return (
     <Card className="mb-4">
       <CardHeader>

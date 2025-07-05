@@ -32,6 +32,7 @@ export interface Erc7730Store {
   generatedErc7730: Erc7730WithAI | null;
   finalErc7730: Erc7730WithAI | null;
   setErc7730: (by: Erc7730WithAI) => void;
+  setFinalErc7730: (by: Erc7730WithAI) => void;
   getMetadata: () => Erc7730WithAI["metadata"] | null;
   getAiData: () => Erc7730WithAI["ai"] | null;
   getUserdoc: () => Erc7730WithAI["userdoc"] | null;
@@ -127,6 +128,7 @@ export const createErc7730Store = () => {
           return "";
         },
         setErc7730: (generatedErc7730) => set(() => ({ generatedErc7730 })),
+        setFinalErc7730: (finalErc7730) => set(() => ({ finalErc7730 })),
         getOperations: () => get().generatedErc7730?.display ?? null,
         getMetadata: () => get().generatedErc7730?.metadata ?? null,
         getAiData: () => get().generatedErc7730?.ai ?? null,

@@ -24,8 +24,10 @@ import { useErc7730Store } from "~/store/erc7730Provider";
 import useFunctionStore from "~/store/useOperationStore";
 import generateFromERC7730 from "./generateFromERC7730";
 import { isAddress } from "viem";
+import { Erc7730 } from "~/store/types";
+import { components } from "~/generate/api-types";
 
-type InputTypes = "address" | "abi" | "protocol";
+type InputTypes = "address" | "abi" | "protocol" | "schema";
 
 const fetchProtocolContracts = async (protocol: string) => {
   const response = await fetch(
@@ -45,7 +47,28 @@ const CardErc7730 = () => {
   const [contracts, setContracts] = useState<
     { address: string; name: string }[] | undefined
   >();
-  const { setErc7730 } = useErc7730Store((state) => state);
+
+  // Schema file
+  const [schema, setSchema] = useState<File | undefined>();
+  const readSchema = (): Promise<Erc7730 | undefined> => {
+    if (!schema) {
+      return Promise.resolve(undefined);
+    }
+
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = async (e: ProgressEvent<FileReader>) => {
+        const text = e?.target?.result;
+        if (!text) {
+          return;
+        }
+        resolve(JSON.parse(text.toString()) as Erc7730);
+      };
+      reader.readAsText(schema);
+    });
+  };
+
+  const { setErc7730, setFinalErc7730 } = useErc7730Store((state) => state);
   const router = useRouter();
 
   const {
@@ -54,38 +77,76 @@ const CardErc7730 = () => {
     error,
   } = useMutation({
     mutationFn: ({ input, type }: { input: string; type: InputTypes }) =>
-      generateFromERC7730({
-        input,
-        inputType: type,
-      }),
+      ["address", "abi"].includes(type)
+        ? generateFromERC7730({
+            input,
+            inputType: type as "address" | "abi",
+          })
+        : Promise.resolve(null),
   });
+
+  const isContractSchema = (
+    schema: Erc7730,
+  ): schema is Erc7730 & {
+    context: {
+      $id?: string | null;
+      contract: components["schemas"]["InputContract"];
+    };
+  } => {
+    return "contract" in schema.context;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     let type = inputType;
+    let data = input;
+    let schema: Erc7730 | undefined;
+
+    if (type === "schema") {
+      schema = await readSchema();
+      if (!schema) {
+        return;
+      }
+
+      if (isContractSchema(schema)) {
+        const address = schema.context.contract.deployments[0]?.address;
+        if (address) {
+          type = "address";
+          data = address;
+        } else {
+          return;
+        }
+      }
+    }
 
     if (type === "protocol") {
-      if (!isAddress(input)) {
-        setContracts(await fetchProtocolContracts(input));
+      if (!isAddress(data)) {
+        setContracts(await fetchProtocolContracts(data));
         return;
       }
       type = "address";
     }
 
-    const erc7730 = await fetchERC7730Metadata({ input, type });
+    const erc7730 = await fetchERC7730Metadata({ input: data, type });
 
     if (erc7730) {
       console.log(erc7730);
       useFunctionStore.persist.clearStorage();
 
-      setErc7730(erc7730);
+      if (schema) {
+        setErc7730({ ...erc7730, ...schema });
+        setFinalErc7730(schema);
+      } else {
+        setErc7730(erc7730);
+      }
+
       router.push("/metadata");
     }
   };
 
   const onTabChange = (value: string) => {
-    setInputType(value as "address" | "abi");
+    setInputType(value as InputTypes);
     setInput("");
   };
 
@@ -93,10 +154,11 @@ const CardErc7730 = () => {
     <div className="w-full lg:w-[580px]">
       <form onSubmit={handleSubmit} className="mb-4 flex w-full flex-col gap-4">
         <Tabs defaultValue="protocol" onValueChange={onTabChange}>
-          <TabsList className="mb-4 grid w-full grid-cols-3">
+          <TabsList className="mb-4 grid w-full grid-cols-4">
             <TabsTrigger value="protocol">Protocol</TabsTrigger>
             <TabsTrigger value="address">Contract Address</TabsTrigger>
             <TabsTrigger value="abi">ABI</TabsTrigger>
+            <TabsTrigger value="schema">Schema</TabsTrigger>
           </TabsList>
           <TabsContent value="protocol">
             {contracts?.length ? (
@@ -170,6 +232,19 @@ const CardErc7730 = () => {
                   placeholder="Paste your ABI here..."
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
+                />
+              </div>
+            </div>
+          </TabsContent>
+          <TabsContent value="schema">
+            <div className="space-y-4">
+              <div className="grid w-full items-center gap-3">
+                <Label htmlFor="schema">Schema</Label>
+                <Input
+                  id="schema"
+                  type="file"
+                  className="w-full"
+                  onChange={(e) => setSchema(e.target.files?.[0])}
                 />
               </div>
             </div>
