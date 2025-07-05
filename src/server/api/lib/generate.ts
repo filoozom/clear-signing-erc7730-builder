@@ -14,26 +14,29 @@ export enum ABIDataType {
 }
 
 export enum FieldFormat {
-  DURATION = "DURATION",
-  DATE = "DATE",
-  AMOUNT = "AMOUNT",
-  RAW = "RAW",
-  NFT_NAME = "NFT_NAME",
-  ADDRESS_NAME = "ADDRESS_NAME",
-  CALL_DATA = "CALL_DATA",
+  DURATION = "duration",
+  DATE = "date",
+  AMOUNT = "amount",
+  RAW = "raw",
+  NFT_NAME = "nftName",
+  ADDRESS_NAME = "addressName",
+  CALL_DATA = "calldata",
+  TOKEN_AMOUNT = "tokenAmount",
+  UNIT = "unit",
+  ENUM = "enum",
 }
 
 export enum DateEncoding {
-  BLOCKHEIGHT = "BLOCKHEIGHT",
-  TIMESTAMP = "TIMESTAMP",
+  BLOCKHEIGHT = "blockheight",
+  TIMESTAMP = "timestamp",
 }
 
 export enum AddressNameType {
-  COLLECTION = "COLLECTION",
-  CONTRACT = "CONTRACT",
-  TOKEN = "TOKEN",
-  EOA = "EOA",
-  WALLET = "WALLET",
+  COLLECTION = "collection",
+  CONTRACT = "contract",
+  TOKEN = "token",
+  EOA = "eoa",
+  WALLET = "wallet",
 }
 
 export type PathElement =
