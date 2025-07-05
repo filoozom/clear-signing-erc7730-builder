@@ -1,4 +1,6 @@
 import { type paths } from "~/generate/api-types";
+import { appRouter } from "~/server/api/root";
+import { api } from "~/trpc/react";
 
 type GenerateBody =
   paths["/api/py/generateERC7730"]["post"]["requestBody"]["content"]["application/json"];
@@ -17,13 +19,15 @@ export default async function generateERC7730({
     abi: inputType === "abi" ? input : undefined,
   };
 
-  const response = await fetch("/api/py/generateERC7730", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
+  if (inputType !== "address") {
+    throw new Error("not yet immplemented");
+  }
+
+  const response = await fetch(
+    `/api/trpc/sample.generate?input=${JSON.stringify({ json: { address: input } })}`,
+  );
+
+  console.log(response);
 
   if (!response.ok) {
     const data = (await response.json()) as {
@@ -32,7 +36,7 @@ export default async function generateERC7730({
     throw new Error(`API Error: ${data.message}`);
   }
 
-  const data = (await response.json()) as GenerateResponse;
+  const data = (await response.json()).result.data.json as GenerateResponse;
 
   return data;
 }
