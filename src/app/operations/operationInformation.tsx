@@ -14,14 +14,16 @@ import { TitleScreen } from "~/components/devices/titleScreen";
 import { Card } from "~/components/ui/card";
 import { type OperationMetadata } from "~/store/types";
 import { Button } from "~/components/ui/button";
+import { FormSuggestion } from "~/components/ui/inputSuggestion";
 
 interface Props {
   form: UseFormReturn<OperationFormType>;
   operationMetadata: OperationMetadata | null;
   onContinue: () => void;
+  suggestion?: string;
 }
 
-const OperationInformation = ({ form, onContinue }: Props) => {
+const OperationInformation = ({ form, onContinue, suggestion }: Props) => {
   const { intent } = form.watch();
 
   return (
@@ -41,6 +43,7 @@ const OperationInformation = ({ form, onContinue }: Props) => {
                   This is the name of the transaction Operation.
                 </FormDescription>
                 <FormMessage />
+                <FormSuggestion field={field} data={suggestion} />
               </FormItem>
             )}
           />
