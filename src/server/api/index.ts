@@ -178,15 +178,25 @@ export const sample = createTRPCRouter({
   generate: publicProcedure
     .input(z.object({ address: z.string() }))
     .query(async ({ input: { address } }) => {
-      const [upstream, ai] = await Promise.all([
-        fetchUpstreamData(address as Address),
-        fetchAiInfo(address as Address),
-      ]);
-      return { ...upstream, ...ai };
+      try {
+        const [upstream, ai] = await Promise.all([
+          fetchUpstreamData(address as Address),
+          fetchAiInfo(address as Address),
+        ]);
+        return { ...upstream, ...ai };
+      } catch (err) {
+        console.error(err);
+        throw err;
+      }
     }),
   protocols: publicProcedure
     .input(z.object({ protocol: z.string() }))
     .query(async ({ input: { protocol } }) => {
-      return await fetchProtocolContracts(protocol);
+      try {
+        return await fetchProtocolContracts(protocol);
+      } catch (err) {
+        console.error(err);
+        throw err;
+      }
     }),
 });
