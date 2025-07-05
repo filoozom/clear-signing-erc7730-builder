@@ -21,7 +21,7 @@ import { ZodError } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useErc7730Store } from "~/store/erc7730Provider";
-import useFunctionStore from "~/store/useOperationStore";
+import useFunctionStore, { useOperationStore } from "~/store/useOperationStore";
 import generateFromERC7730 from "./generateFromERC7730";
 import { isAddress } from "viem";
 import { Erc7730 } from "~/store/types";
@@ -68,6 +68,7 @@ const CardErc7730 = () => {
     });
   };
 
+  const { setValidateOperation } = useOperationStore();
   const { setErc7730, setFinalErc7730 } = useErc7730Store((state) => state);
   const router = useRouter();
 
@@ -134,8 +135,22 @@ const CardErc7730 = () => {
       useFunctionStore.persist.clearStorage();
 
       if (schema) {
-        setErc7730({ ...erc7730, ...schema });
+        setErc7730({
+          ...erc7730,
+          ...schema,
+          display: {
+            ...erc7730.display,
+            formats: {
+              ...erc7730.display.formats,
+              ...schema.display.formats,
+            },
+          },
+        });
         setFinalErc7730(schema);
+
+        for (const format of Object.keys(schema.display.formats)) {
+          setValidateOperation(format);
+        }
       } else {
         setErc7730(erc7730);
       }
