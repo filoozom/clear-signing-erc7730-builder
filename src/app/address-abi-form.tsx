@@ -63,7 +63,7 @@ const CardErc7730 = () => {
           </TabsList>
           <TabsContent value="address">
             <div className="space-y-4">
-              <div className="space-y-2">
+              <div className="space-y-4">
                 <Label htmlFor="eth-address">Contract Address</Label>
                 <Input
                   id="contract-address"
@@ -71,6 +71,7 @@ const CardErc7730 = () => {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                 />
+                <p className="text-center">Can take up to 3 minutes to load</p>
               </div>
             </div>
           </TabsContent>
