@@ -1,4 +1,4 @@
-import { type AbiFunction, AbiParameter, toFunctionSelector } from "viem";
+import { type AbiFunction, AbiParameter, toFunctionSignature } from "viem";
 import type { SolidityTuple, SolidityArrayWithTuple, Address } from "abitype";
 import fetch from "cross-fetch";
 
@@ -448,7 +448,7 @@ async function ctxCalldata(
   const fnMap = getFunctions(abi);
   const trees = Object.fromEntries(
     Object.values(fnMap).map((f) => [
-      toFunctionSelector(f),
+      toFunctionSignature(f),
       abiFunctionToTree(f),
     ]),
   );
