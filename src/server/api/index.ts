@@ -2,7 +2,7 @@ import { Address } from "abitype";
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
-import { generateText, Output } from "ai";
+import { generateText, GenerateTextResult, Output, ToolSet } from "ai";
 import { openrouter } from "./lib/openrouter";
 
 const { MODEL = "openrouter/cypher-alpha:free" } = process.env;
@@ -48,6 +48,11 @@ const fetchSourcifyContract = async (
     `https://sourcify.dev/server/v2/contract/${chainId}/${address}?fields=sources,abi,devdoc,userdoc`,
   );
   return (await response.json()) as SourcifyContract;
+};
+
+const parseStructured = (result: GenerateTextResult<ToolSet, any>): any => {
+  const cleaned = result.text.replace(/^\s*```json/, "").replace(/```\s*$/, "");
+  return JSON.parse(cleaned);
 };
 
 const fetchAiInfo = async (address: Address) => {
@@ -129,9 +134,6 @@ const fetchAiInfo = async (address: Address) => {
     }),
   });
 
-  const cleaned = result.text.replace(/^\s*```json/, "").replace(/```\s*$/, "");
-  const parsed = JSON.parse(cleaned);
-
   if (data.userdoc?.methods?.constructor) {
     delete data.userdoc.methods.constructor;
   }
@@ -140,7 +142,7 @@ const fetchAiInfo = async (address: Address) => {
     delete data.devdoc.methods.constructor;
   }
 
-  return { ...data, ai: parsed };
+  return { ...data, ai: parseStructured(result) };
 };
 
 const fetchUpstreamData = async (address: Address) => {
@@ -154,6 +156,24 @@ const fetchUpstreamData = async (address: Address) => {
   return await response.json();
 };
 
+const fetchProtocolContracts = async (protocol: string) => {
+  const result = await generateText({
+    model: openrouter.chat(MODEL),
+    system: `You are a helpful assistant that provides detailed information about smart contracts on the Ethereum Virtual Machine (EVM). You have access to the Sourcify data, which allows you to fetch verified smart contract data including ABI, source code, developer documentation, and user documentation.`,
+    prompt: `Get all smart contracts linked to the \`${protocol}\` protocol.`,
+    experimental_output: Output.object({
+      schema: z.array(
+        z.object({
+          name: z.string().describe("The name of the smart contract"),
+          address: z.string().describe("The address of the smart contract"),
+        }),
+      ),
+    }),
+  });
+
+  return parseStructured(result);
+};
+
 export const sample = createTRPCRouter({
   generate: publicProcedure
     .input(z.object({ address: z.string() }))
@@ -163,5 +183,10 @@ export const sample = createTRPCRouter({
         fetchAiInfo(address as Address),
       ]);
       return { ...upstream, ...ai };
+    }),
+  protocols: publicProcedure
+    .input(z.object({ protocol: z.string() }))
+    .query(async ({ input: { protocol } }) => {
+      return await fetchProtocolContracts(protocol);
     }),
 });

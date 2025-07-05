@@ -29,25 +29,51 @@ const predefinedABIs = [
 
 interface Props {
   setInput: Dispatch<SetStateAction<string>>;
-  inputType: "address" | "abi";
+  inputType: "address" | "abi" | "protocol";
 }
 
+const titles: Record<Props["inputType"], string> = {
+  address: "Address",
+  abi: "ABI",
+  protocol: "Protocol",
+};
+
+const descriptions: Record<Props["inputType"], string> = {
+  address: "address",
+  abi: "ABI",
+  protocol: "protocol",
+};
+
+const predefinedData: Record<
+  Props["inputType"],
+  { label: string; value: string }[]
+> = {
+  address: predefinedAddresses,
+  abi: predefinedABIs,
+  protocol: [
+    {
+      label: "CoW Protocol",
+      value: "CoW Protocol",
+    },
+    {
+      label: "Ethereum Deposit Contract",
+      value: "Ethereum Deposit Contract",
+    },
+  ],
+};
+
 const SampleAddressAbiCard = ({ setInput, inputType }: Props) => {
-  const data = inputType === "address" ? predefinedAddresses : predefinedABIs;
   return (
     <Card className="mb-4">
       <CardHeader>
-        <CardTitle>
-          Sample {inputType === "address" ? "Address" : "ABI"}
-        </CardTitle>
+        <CardTitle>Sample {titles[inputType]}</CardTitle>
         <CardDescription>
-          Click to copy a sample {inputType === "address" ? "address" : "ABI"}{" "}
-          for testing
+          Click to copy a sample {descriptions[inputType]} for testing
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex flex-wrap gap-2">
-          {data.map(({ value, label }) => (
+          {predefinedData[inputType].map(({ value, label }) => (
             <Button
               key={value}
               variant="outline"
