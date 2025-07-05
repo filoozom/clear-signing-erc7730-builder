@@ -99,7 +99,7 @@ const CardErc7730 = () => {
             <TabsTrigger value="abi">ABI</TabsTrigger>
           </TabsList>
           <TabsContent value="protocol">
-            {contracts ? (
+            {contracts?.length ? (
               <div className="flex flex-col gap-4">
                 <div className="grid grid-cols-2 gap-4">
                   {contracts.map((contract) => (
