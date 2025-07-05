@@ -89,6 +89,7 @@ const fetchAiInfo = async (address: Address) => {
 		\`\`\`
 
 		Make sure to include the human readable function name and arguments (including the name, type and concise human readable name) that each function takes.
+    Makes human-readable names concise (2-5 words maximum), capital case, without any quotes, parenthesis or special characters. Prefer abbreviations (ID rather than identifier).
     
     In addition to this, provide the smart contract owner common name, legal name, URL and smart contract name.
 	`;
