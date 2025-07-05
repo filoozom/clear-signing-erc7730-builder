@@ -20,6 +20,7 @@ import Devices from "./devices";
 import { Erc7730StoreContext, useErc7730Store } from "~/store/erc7730Provider";
 import { Card } from "~/components/ui/card";
 import type { Erc7730 } from "~/store/types";
+import { FormSuggestion } from "../../components/ui/inputSuggestion";
 
 const metaDataSchema = z.object({
   owner: z.string().min(1, {
@@ -130,14 +131,7 @@ const MetadataForm = () => {
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
-                    {ai?.ownerName && (
-                      <FormDescription
-                        className="cursor-pointer"
-                        onClick={() => field.onChange(ai.ownerName)}
-                      >
-                        Suggestion: {ai?.ownerName}
-                      </FormDescription>
-                    )}
+                    <FormSuggestion field={field} data={ai?.ownerName} />
                   </FormItem>
                 )}
               />
@@ -151,14 +145,7 @@ const MetadataForm = () => {
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
-                    {ai?.ownerName && (
-                      <FormDescription
-                        className="cursor-pointer"
-                        onClick={() => field.onChange(ai.ownerLegalName)}
-                      >
-                        Suggestion: {ai?.ownerLegalName}
-                      </FormDescription>
-                    )}
+                    <FormSuggestion field={field} data={ai?.ownerLegalName} />
                   </FormItem>
                 )}
               />
@@ -178,14 +165,7 @@ const MetadataForm = () => {
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
-                    {ai?.ownerName && (
-                      <FormDescription
-                        className="cursor-pointer"
-                        onClick={() => field.onChange(ai.projectUrl)}
-                      >
-                        Suggestion: {ai?.projectUrl}
-                      </FormDescription>
-                    )}
+                    <FormSuggestion field={field} data={ai?.projectUrl} />
                   </FormItem>
                 )}
               />
@@ -199,14 +179,7 @@ const MetadataForm = () => {
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
-                    {ai?.ownerName && (
-                      <FormDescription
-                        className="cursor-pointer"
-                        onClick={() => field.onChange(ai.contractName)}
-                      >
-                        Suggestion: {ai?.contractName}
-                      </FormDescription>
-                    )}
+                    <FormSuggestion field={field} data={ai?.contractName} />
                   </FormItem>
                 )}
               />
