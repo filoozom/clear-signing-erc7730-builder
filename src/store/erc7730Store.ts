@@ -2,16 +2,36 @@ import { createStore } from "zustand/vanilla";
 import { type Operation, type OperationMetadata, type Erc7730 } from "./types";
 import { persist, createJSONStorage } from "zustand/middleware";
 
+// NOTE: Clearly hacky, but not enough time to learn all the intricaties of this codebase during the hackathon
+type Erc7730WithAI = Erc7730 & {
+  ai?: {
+    contractName: string;
+    ownerName: string;
+    ownerLegalName: string;
+    projectUrl: string;
+    functions: {
+      name: string;
+      humanReadableName: string;
+      arguments: {
+        name: string;
+        type: string;
+        humanReadableName: string;
+      }[];
+    }[];
+  };
+};
+
 export interface Erc7730Store {
-  generatedErc7730: Erc7730 | null;
-  finalErc7730: Erc7730 | null;
-  setErc7730: (by: Erc7730) => void;
-  getMetadata: () => Erc7730["metadata"] | null;
+  generatedErc7730: Erc7730WithAI | null;
+  finalErc7730: Erc7730WithAI | null;
+  setErc7730: (by: Erc7730WithAI) => void;
+  getMetadata: () => Erc7730WithAI["metadata"] | null;
+  getAiData: () => Erc7730WithAI["ai"] | null;
   getContractAddress: () => string | null;
   getContractId: () => string | null;
-  setContractId: ($id: Erc7730["context"]["$id"]) => void;
-  setMetadata: (metadata: Erc7730["metadata"]) => void;
-  getOperations: () => Erc7730["display"] | null;
+  setContractId: ($id: Erc7730WithAI["context"]["$id"]) => void;
+  setMetadata: (metadata: Erc7730WithAI["metadata"]) => void;
+  getOperations: () => Erc7730WithAI["display"] | null;
   getOperationsMetadata: (name: string | null) => OperationMetadata | null;
   getFinalOperationsMetadata: (name: string | null) => OperationMetadata | null;
   getOperationsByName: (name: string | null) => Operation | null;
@@ -101,6 +121,7 @@ export const createErc7730Store = () => {
         setErc7730: (generatedErc7730) => set(() => ({ generatedErc7730 })),
         getOperations: () => get().generatedErc7730?.display ?? null,
         getMetadata: () => get().generatedErc7730?.metadata ?? null,
+        getAiData: () => get().generatedErc7730?.ai ?? null,
         getOperationsMetadata: (name) => {
           if (!name) return null;
           const formats = get().generatedErc7730?.display?.formats ?? {};

@@ -45,10 +45,12 @@ const MetadataForm = () => {
     setContractId,
     getContractAddress,
     getContractId,
+    getAiData,
   } = useErc7730Store((s) => s);
   const metadata = getMetadata();
   const address = getContractAddress();
   const contractId = getContractId();
+  const ai = getAiData();
 
   // Update the schema to include the new field
   const form = useForm<
@@ -128,6 +130,14 @@ const MetadataForm = () => {
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
+                    {ai?.ownerName && (
+                      <FormDescription
+                        className="cursor-pointer"
+                        onClick={() => field.onChange(ai.ownerName)}
+                      >
+                        Suggestion: {ai?.ownerName}
+                      </FormDescription>
+                    )}
                   </FormItem>
                 )}
               />
@@ -141,6 +151,14 @@ const MetadataForm = () => {
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
+                    {ai?.ownerName && (
+                      <FormDescription
+                        className="cursor-pointer"
+                        onClick={() => field.onChange(ai.ownerLegalName)}
+                      >
+                        Suggestion: {ai?.ownerLegalName}
+                      </FormDescription>
+                    )}
                   </FormItem>
                 )}
               />
@@ -160,6 +178,14 @@ const MetadataForm = () => {
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
+                    {ai?.ownerName && (
+                      <FormDescription
+                        className="cursor-pointer"
+                        onClick={() => field.onChange(ai.projectUrl)}
+                      >
+                        Suggestion: {ai?.projectUrl}
+                      </FormDescription>
+                    )}
                   </FormItem>
                 )}
               />
@@ -173,6 +199,14 @@ const MetadataForm = () => {
                       <Input {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
+                    {ai?.ownerName && (
+                      <FormDescription
+                        className="cursor-pointer"
+                        onClick={() => field.onChange(ai.contractName)}
+                      >
+                        Suggestion: {ai?.contractName}
+                      </FormDescription>
+                    )}
                   </FormItem>
                 )}
               />
